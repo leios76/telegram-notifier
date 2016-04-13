@@ -1,0 +1,110 @@
+<!DOCTYPE HTML>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>텔레그램 알림 설정</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+
+
+    <link rel="stylesheet" href="public/libs/bootstrap/css/bootstrap.css"
+          th:href="@{libs/bootstrap/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" href="public/libs/font-awesome/css/font-awesome.css"
+          th:href="@{libs/font-awesome/css/font-awesome.min.css}"/>
+    <link rel="stylesheet" href="public/libs/bootstrap/css/bootstrap-theme.css"
+          th:href="@{libs/bootstrap/css/bootstrap-theme.min.css}"/>
+</head>
+<body>
+
+
+<div class="container">
+    <div class="row">
+    </div>
+    <div class="row">
+        <h2>등록된 그룹</h2>
+        <table class="table">
+            <thead>
+            <th>그룹이름</th>
+            <th>현장코드</th>
+            <th>시간</th>
+            <th>도구</th>
+            </thead>
+            <tr th:each="group : ${registered_groups}">
+                <td th:text="${group.name}">울산 - 새벽 근무조</td>
+                <td th:text="${group.mapped_id}">1111</td>
+                <td th:text="${#calendars.format(group.start, 'HH:mm')} + ' ~ ' + ${#calendars.format(group.end, 'HH:mm')}">
+                    00:00 ~ 08:00
+                </td>
+                <td>
+                    <a href="#edit"><i class="fa fa-edit fa-fw" aria-hidden="true"></i></a>
+                    <a href="#delete"><i class="fa fa-trash fa-fw" aria-hidden="true"></i></a>
+                </td>
+            </tr>
+            <!--/*-->
+            <tr>
+                <td>울산 - 오전 근무조</td>
+                <td>1111</td>
+                <td>08:00 ~ 16:00</td>
+                <td>
+                    <a href="#edit"><i class="fa fa-edit fa-fw" aria-hidden="true"></i></a>
+                    <a href="#delete"><i class="fa fa-trash fa-fw" aria-hidden="true"></i></a>
+                </td>
+            </tr>
+            <tr>
+                <td>울산 - 오후 근무조</td>
+                <td>1111</td>
+                <td>16:00 ~ 00:00</td>
+                <td>
+                    <a href="#edit"><i class="fa fa-edit fa-fw" aria-hidden="true"></i></a>
+                    <a href="#delete"><i class="fa fa-trash fa-fw" aria-hidden="true"></i></a>
+                </td>
+            </tr>
+            <!--*/-->
+        </table>
+    </div>
+
+    <div class="row">
+    </div>
+    <div class="row">
+        <h2>미등록 그룹</h2>
+        <table class="table">
+            <thead>
+            <th>그룹이름</th>
+            <th>도구</th>
+            </thead>
+            <tr th:each="group : ${unregistered_groups}">
+                <td th:text="${group.name}">파주 - 새벽 근무조</td>
+                <td>
+                    <a href="#edit"><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i></a>
+                </td>
+            </tr>
+            <!--/*-->
+            <tr>
+                <td>파주 - 새벽 근무조</td>
+                <td>
+                    <a href="#edit"><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i></a>
+                </td>
+            </tr>
+            <tr>
+                <td>파주 - 새벽 근무조</td>
+                <td>
+                    <a href="#edit"><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i></a>
+                </td>
+            </tr>
+            <tr>
+                <td>파주 - 새벽 근무조</td>
+                <td>
+                    <a href="#edit"><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i></a>
+                </td>
+            </tr>
+            <!--*/-->
+        </table>
+    </div>
+
+</div>
+
+
+<script type="javascript" src="public/libs/jquery/jquery-2.2.3.js" th:src="@{libs/jquery/jquery-2.2.3.min.js}"></script>
+<script type="javascript" src="public/libs/bootstrap/js/bootstrap.js"
+        th:src="@{libs/bootstrap/js/bootstrap.min.js}"></script>
+</body>
+</html>

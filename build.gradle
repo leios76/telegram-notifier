@@ -1,0 +1,168 @@
+// ---------------------------------------------------------------- Build script
+buildscript {
+  ext {
+    springBootVersion = '1.3.3.RELEASE'
+  }
+
+  repositories {
+    maven { url 'http://repo.springsource.org/plugins-release' }
+  }
+  dependencies {
+    classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+  }
+}
+
+// ---------------------------------------------------------------- Spring
+apply plugin: 'spring-boot'
+
+// ---------------------------------------------------------------- Apache Maven
+apply plugin: 'maven'
+
+group = 'kr.nor'
+version = '1.0-SNAPSHOT'
+
+
+uploadArchives {
+  repositories {
+    mavenLocal()
+    mavenDeployer {
+      repository(url: PERSONAL_REPOSITORY_URL_RELEASES) {
+        authentication(userName: PERSONAL_REPOSITORY_USERNAME, password: PERSONAL_REPOSITORY_PASSWORD)
+      }
+      snapshotRepository(url: PERSONAL_REPOSITORY_URL_SNAPSHOTS) {
+        authentication(userName: PERSONAL_REPOSITORY_USERNAME, password: PERSONAL_REPOSITORY_PASSWORD)
+      }
+    }
+  }
+}
+
+
+// ------------------------------------------------------------------------ Java
+apply plugin: 'java'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+configurations {
+  provided
+}
+
+configurations.all {
+  resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
+
+repositories {
+  maven {
+    url PERSONAL_REPOSITORY_URL_PUBLIC
+    credentials {
+      username PERSONAL_REPOSITORY_USERNAME
+      password PERSONAL_REPOSITORY_PASSWORD
+    }
+  }
+}
+
+// ---------------------------------------------------------------- Dependencies
+ext {
+  springBootVersion = '1.3.3.RELEASE'
+}
+
+dependencies {
+  compile "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
+  compile "org.springframework.boot:spring-boot-starter-thymeleaf:${springBootVersion}"
+  compile "org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}"
+
+  compile "mysql:mysql-connector-java"
+  compile "joda-time:joda-time:2.9.3"
+
+  testCompile "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
+  testCompile "com.h2database:h2:1.3.148"
+}
+
+sourceSets.main.compileClasspath += configurations.provided
+sourceSets.test.compileClasspath += configurations.provided
+javadoc.classpath += configurations.provided
+
+test {
+  testLogging.showStandardStreams = true
+}
+
+
+// ------------------------------------------------------------ Fuck the Eclipse
+apply plugin: 'eclipse'
+
+eclipse {
+  classpath {
+    plusConfigurations += configurations.provided
+  }
+}
+
+
+// --------------------------------------------------------------- IntelliJ IDEA
+apply plugin: 'idea'
+
+idea {
+  project {
+    ipr {
+      beforeMerged { project ->
+        if (subprojects.size() > 0) {
+          project.modulePaths.clear()
+        }
+      }
+
+      withXml { provider ->
+        if (subprojects.size() > 0) {
+          def vcsNode = provider.node.component.find { it.@name == 'VcsDirectoryMappings' }
+          vcsNode.children().clear()
+          subprojects.each {
+            vcsNode.appendNode('mapping', [directory: '$PROJECT_DIR$/' + it.name, vcs: 'Git'])
+          }
+
+          def moduleNode = provider.node.component.find { it.@name == 'ProjectModuleManager' }
+          moduleNode.children().clear()
+
+          moduleNode.appendNode('modules')
+
+          subprojects.each { subproject ->
+            moduleNode.modules*.appendNode('module', [fileurl: 'file://$PROJECT_DIR$/' + subproject.name + '/' + subproject.name + '.iml', filepath: '$PROJECT_DIR$/' + subproject.name + '/' + subproject.name + '.iml'])
+          }
+        } else {
+          provider.node.component.find { it.@name == 'VcsDirectoryMappings' }.mapping.@vcs = 'Git'
+        }
+      }
+    }
+  }
+  module {
+    jdkName = '1.7'
+    downloadJavadoc = true
+    downloadSources = true
+    scopes.PROVIDED.plus += configurations.provided
+    iml {
+      //closure executed after *.iml content is loaded from existing file
+      //but before gradle build information is merged
+      beforeMerged { module ->
+        //if you want skip merging exclude dirs
+        module.excludeFolders.clear()
+        module.dependencies.clear()
+      }
+      //closure executed after *.iml content is loaded from existing file
+      //and after gradle build information is merged
+      whenMerged { module ->
+        //you can tinker with Module
+      }
+    }
+  }
+}
+
+// ---------------------------------------------------------------------- tasks?
+
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+javadoc.options {
+  encoding = 'UTF-8'
+  docEncoding = 'UTF-8'
+}
+
+jar {
+  baseName = 'telegram-notifier'
+}
