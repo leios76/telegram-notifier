@@ -23,15 +23,17 @@
         <h2>등록된 그룹</h2>
         <table class="table">
             <thead>
-            <th>그룹이름</th>
-            <th>현장코드</th>
+            <th>메신저 그룹</th>
+            <th>현장 이름</th>
+            <th>현장 코드</th>
             <th>시간</th>
             <th>도구</th>
             </thead>
-            <tr th:each="group : ${registered_groups}">
-                <td th:text="${group.name}">울산 - 새벽 근무조</td>
-                <td th:text="${group.mapped_id}">1111</td>
-                <td th:text="${#calendars.format(group.start, 'HH:mm')} + ' ~ ' + ${#calendars.format(group.end, 'HH:mm')}">
+            <tr th:each="mapping : ${mappings}">
+                <td th:text="${mapping.messengerGroup.name}">울산 - 새벽 근무조</td>
+                <td th:text="${mapping.field.name}">울산</td>
+                <td th:text="${mapping.field.id}">1</td>
+                <td th:text="${#calendars.format(mapping.start, 'HH:mm')} + ' ~ ' + ${#calendars.format(mapping.end, 'HH:mm')}">
                     00:00 ~ 08:00
                 </td>
                 <td>
@@ -42,6 +44,7 @@
             <!--/*-->
             <tr>
                 <td>울산 - 오전 근무조</td>
+                <td>울산</td>
                 <td>1111</td>
                 <td>08:00 ~ 16:00</td>
                 <td>
@@ -51,6 +54,7 @@
             </tr>
             <tr>
                 <td>울산 - 오후 근무조</td>
+                <td>울산</td>
                 <td>1111</td>
                 <td>16:00 ~ 00:00</td>
                 <td>
@@ -68,11 +72,11 @@
         <h2>미등록 그룹</h2>
         <table class="table">
             <thead>
-            <th>그룹이름</th>
+            <th>메신저 그룹</th>
             <th>도구</th>
             </thead>
-            <tr th:each="group : ${unregistered_groups}">
-                <td th:text="${group.name}">파주 - 새벽 근무조</td>
+            <tr th:each="messenger_group : ${messenger_groups}">
+                <td th:text="${messenger_group.name}">파주 - 새벽 근무조</td>
                 <td>
                     <a href="#edit"><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i></a>
                 </td>

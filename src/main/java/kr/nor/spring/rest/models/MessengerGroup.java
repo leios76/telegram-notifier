@@ -10,14 +10,20 @@ public class MessengerGroup {
 
     private String name;
 
+
     public MessengerGroup() {
         this(0, "");
+    }
+
+    public MessengerGroup(int id) {
+        this(id, "");
     }
 
     public MessengerGroup(int id, String name) {
         this.id = id;
         this.name = name;
     }
+
 
     public int getId() {
         return id;

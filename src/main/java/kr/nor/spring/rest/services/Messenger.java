@@ -7,5 +7,5 @@ import java.util.List;
 public interface Messenger {
     public List<MessengerGroup> getGroups();
 
-    public void sendMessage();
+    public void sendMessage(String text);
 }

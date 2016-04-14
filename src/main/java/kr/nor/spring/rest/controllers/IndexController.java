@@ -23,16 +23,11 @@ public class IndexController {
 
     @RequestMapping("/")
     public String index(Model model) {
-        List<Mapping> registered_group = new ArrayList<>();
-        List<MessengerGroup> unregistered_group = messenger.getGroups();
 
-        Iterator<Mapping> iterator = mappingDao.findAll().iterator();
-        while (iterator.hasNext()) {
-            registered_group.add(iterator.next());
-        }
+        model.addAttribute("mappings", mappingDao.findAll());
+        model.addAttribute("messenger_groups", messenger.getGroups());
 
-        model.addAttribute("registered_groups", registered_group);
-        model.addAttribute("unregistered_groups", unregistered_group);
+        //messenger.sendMessage("Sent from java spring");
 
         return "index";
     }

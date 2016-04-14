@@ -1,12 +1,13 @@
 package kr.nor.spring.rest.models;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Time;
 
 @Entity
 public class Mapping implements Serializable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
@@ -18,6 +19,7 @@ public class Mapping implements Serializable {
     private Field field;
 
     private Time start;
+
     private Time end;
 
     public int getId() {
