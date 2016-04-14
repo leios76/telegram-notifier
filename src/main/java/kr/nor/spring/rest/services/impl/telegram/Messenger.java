@@ -1,11 +1,13 @@
 package kr.nor.spring.rest.services.impl.telegram;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.nor.spring.rest.config.TelegramConfig;
 import kr.nor.spring.rest.models.MessengerGroup;
 import kr.nor.spring.rest.services.impl.telegram.struct.Update;
 import kr.nor.spring.rest.services.impl.telegram.struct.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -15,8 +17,10 @@ import java.util.List;
 
 @Service
 public class Messenger implements kr.nor.spring.rest.services.Messenger {
-
     private static final Logger logger = LoggerFactory.getLogger(Messenger.class);
+
+    @Autowired
+    private TelegramConfig config;
 
     private final RestTemplate restTemplate;
 
@@ -28,7 +32,7 @@ public class Messenger implements kr.nor.spring.rest.services.Messenger {
     public List<MessengerGroup> getGroups() {
         logger.info("getGroups");
 
-        String html = restTemplate.getForObject("https://api.telegram.org/bot94980980:AAGuZNtNY2IH9cUDNG1plEbhtwHwkz3zG0E/getUpdates", String.class);
+        String html = restTemplate.getForObject("https://api.telegram.org/bot" + config.getToken() + "/getUpdates", String.class);
 
         List<MessengerGroup> mappings = new ArrayList<>();
 
@@ -43,16 +47,15 @@ public class Messenger implements kr.nor.spring.rest.services.Messenger {
                     if (update.getMessage().getChat().getType().equals("group")) {
                         logger.info("New group: {}", update.getMessage().getChat().getId());
                         mappings.add(new MessengerGroup(update.getMessage().getChat().getId(), update.getMessage().getChat().getTitle()));
-                        continue;
                     }
-                }
-                User new_chat_member = update.getMessage().getNew_chat_member();
-                if (new_chat_member != null) {
-                    if (new_chat_member.getId() == 94980980) {
-                        if (update.getMessage().getChat().getType().equals("group")) {
-                            logger.info("New group: {}", update.getMessage().getChat().getId());
-                            mappings.add(new MessengerGroup(update.getMessage().getChat().getId(), update.getMessage().getChat().getTitle()));
-                            continue;
+                } else {
+                    User new_chat_member = update.getMessage().getNew_chat_member();
+                    if (new_chat_member != null) {
+                        if (new_chat_member.getId() == 94980980) {
+                            if (update.getMessage().getChat().getType().equals("group")) {
+                                logger.info("New group: {}", update.getMessage().getChat().getId());
+                                mappings.add(new MessengerGroup(update.getMessage().getChat().getId(), update.getMessage().getChat().getTitle()));
+                            }
                         }
                     }
                 }
